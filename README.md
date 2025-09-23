@@ -241,13 +241,70 @@
 4. 최종 모델 선정
    - Optuna를 사용한 하이퍼파라미터 최적화를 통해 `XGBoost`와 `LightGBM`의 성능을 극한으로 끌어올린 후, 최종적으로 가장 뛰어난 모델을 선정합니다. 선정된 모델을 추후에 10개의 통합된 채널 실험에 적용합니다.
 
+3-3. 사용피처
 
+### **정적 피처**
 
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `STEEL_TYPE` | 강종 | `원본 메타데이터 값` |
+| `SIZE` | 강철바 사이즈 | `원본 메타데이터 값` |
+| `LINE_SPEED` | 검사 속도 | `원본 메타데이터 값`|
+| `BAR_datetime` | 날짜와 검사 시간 | `원본 메타데이터 값` |
 
+생성이유: 정적 피처는 각 검사의 가장 기본적인 환경 정보를 나타내며 특히 `STEEL_TYPE`과 `SIZE`는 LOT 단위로 변경되며 신호의 기준선에 큰 영향을 미치기 때문에, 추후에 모델에 입력을 했을 때 모델이 LOT별로 각기 다른 검사 환경을 구분하고 이해하는데 필요한 정보가 될 것입니다.  
 
+### **내부 신호 피처**
 
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `sensor_mean` | 채널 신호값의 평균 | `df['sensor_col'].mean()` |
+| `sensor_std` | 채널 신호값의 표준편차 | `df['sensor_col'].std()` |
+| `sensor_median` | 채널 신호값의 중위수 | `df['sensor_col'].median()`|
+| `event_count_h` | 강철바의 High_level 결함 총 발생 횟수 | `df[h_envnt_col].sum()` |
+| `event_count_l` | 강철바의 Law_level 결함 총 발생 횟수 | `df[l_envnt_col].sum()` |
+| `sensor_peak_count` | 신호가 상단 임계값을 넘어선 횟수(피크 발생 횟수) | `(signal_original > upper_band_aligned).sum()` |
 
+생성이유: 내부 신호 피처는 하나의 강철바를 통과하는 전체 신호의 분포 특성을 평균, 표준편차, 중위수 등의 하나의 통계 값으로 요약을 합니다. 해당 통계값들은 신호의 전반적인 수준과 안정성을 나타냅니다. 결함 발생 횟수와 피크 값 피처는 모델에게 순간적으로 튀는 값의 빈도를 알려줄 수 있습니다. 
 
+### **미시적 시계열 rolling 파생변수**
+
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `micro_sensor_rolling_std_mean_11` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).std().mean()` |
+| `micro_sensor_rolling_mean_std_11` | 채널별 신호값의 이동 평균을 표준편차로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).mean().std()` |
+| `micro_sensor_rolling_std_std_11` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).std().std()` |
+| `micro_sensor_rolling_std_mean_33` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).std().mean()` |
+| `micro_sensor_rolling_mean_std_33` | 채널별 신호값의 이동 평균을 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).mean().std()` |
+| `micro_sensor_rolling_std_std_33` | 채널별 신호값의 이동 표준편차를 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).std().std()` |
+
+생성이유: `t+1` 실험과 마찬가지로, EDA에서 확인된 원본 신호의 높은 변동성을 완화하고 신호의 국소적인(Local) 변화를 포착하기 위해 사용했습니다. 다만 실험을 통해 최적의 성능을 보인 window_size를 11과 33으로 변경하였습니다. 
+
+### **미시적 시계열 ewm 파생변수**
+
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `micro_sensor_ewm_11_mean` | 채널별 신호값의 지수가중평균의 최종값, span=11 | `df[sensor_col].ewm(span=11, min_periods=1).mean().iloc[-1]` |
+| `micro_sensor_ewm_11_std` | 채널별 신호값을 지수가중표준편차의 최종값, span=11 | `df[sensor_col].ewm(span=11, min_periods=1).std().iloc[-1]` |
+| `micro_sensor_ewm_33_mean` | 채널별 신호값을 지수가중평균의 최종값, span=33 | `df[sensor_col].ewm(span=33, min_periods=1).mean().iloc[-1]` |
+| `micro_sensor_ewm_33_std` | 채널별 신호값을 지수가중표준편차의 최종값, span=33 | `df[sensor_col].ewm(span=33, min_periods=1).std().iloc[-1]` |
+
+생성이유: `t+1` 실험과 동일하게, 최신 데이터에 더 큰 가중치를 부여하여 강철바의 최종 상태를 효과적으로 요약하기 위해 ewm 피처를 사용했습니다. rolling과 마찬가지로, span_size를 11과 33으로 변경하여 적용했습니다.
+
+### **미시적 순열 엔트로피 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+`sensor_col_perm_entropy` | 채널별 신호값의 순열 엔트로피(복잡도) | `ant.perm_entropy(df[sensor_col], normalize=True)` |
+
+생성이유: amtropy 라이브러리의 순열 엔트로피(perm_entropy) 알고리즘을 사용하였으며, 순열 엔트로피는 시계열 데이터의 순서 관계를 기반으로 패턴의 무작위성 즉, 신호의 복잡성 또는 예측 불가능성을 측정하기 위해 사용합니다. 표준편차가 단순히 신호의 크기가 얼마나 변동하는지를 본다면, 순열 엔트로피는 신호의 패턴이 얼마나 무질서한지를 봅니다. 데이터의 값이 아닌, 값의 상대적인 순서에 주목하기 때문에 신호의 잡음에 강하다는 장점이 있습니다.
+원래는 오리지널 entropy 알고리즘을 사용하려 하였으나 계산 시간이 너무 오래 걸려서 이보다 훨씬 가벼운 순열 엔트로피로 대체를 하게 되었습니다.
+
+### **미시적 카츠 프랙탈 차원 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `sensor_col_katz_fd` | 채널별 신호값의 카츠 프랙탈 차원(거칠기) | `ant.katz_fd(df[sensor_col])` |
+
+생성이유: antropy 라이브러리의 카츠 프랙탈 차원(Katz Fractal Dimension) 알고리즘을 사용하였으며, 엔트로피와는 다른 관점에서, 신호의 기하학적인 거칠기를 측정하기 위해 사용합니다. 프랙탈 차원은 선형적인 통게량으로는 포착하기 힘든 신호의 복잡한 형태를 숫자로 나타냅니다. 
 
 
 
