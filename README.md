@@ -80,7 +80,6 @@
 ### 사용 피처
 
 ### **정적 피처**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `STEEL_TYPE` | 강종 | `원본 메타데이터 값` |
@@ -88,10 +87,9 @@
 | `LINE_SPEED` | 검사 속도 | `원본 메타데이터 값`|
 | `BAR_datetime` | 날짜와 검사 시간 | `원본 메타데이터 값` |
 
-생성이유: 정적 피처는 각 검사의 가장 기본적인 환경 정보를 나타내며 특히 `STEEL_TYPE`과 `SIZE`는 LOT 단위로 변경되며 신호의 기준선에 큰 영향을 미치기 때문에, 추후에 모델에 입력을 했을 때 모델이 LOT별로 각기 다른 검사 환경을 구분하고 이해하는데 필요한 정보가 될 것입니다.  
+*생성이유*: 정적 피처는 각 검사의 가장 기본적인 환경 정보를 나타내며 특히 `STEEL_TYPE`과 `SIZE`는 LOT 단위로 변경되며 신호의 기준선에 큰 영향을 미치기 때문에, 추후에 모델에 입력을 했을 때 모델이 LOT별로 각기 다른 검사 환경을 구분하고 이해하는데 필요한 정보가 될 것입니다.  
     
 ### **내부 신호 피처**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `sensor_mean` | 채널 신호값의 평균 | `df['sensor_col'].mean()` |
@@ -101,10 +99,9 @@
 | `event_count_l` | 강철바의 Law_level 결함 총 발생 횟수 | `df[l_envnt_col].sum()` |
 | `sensor_peak_count` | 신호가 상단 임계값을 넘어선 횟수(피크 발생 횟수) | `(signal_original > upper_band_aligned).sum()` |
 
-생성이유: 내부 신호 피처는 하나의 강철바를 통과하는 전체 신호의 분포 특성을 평균, 표준편차, 중위수 등의 하나의 통계 값으로 요약을 합니다. 해당 통계값들은 신호의 전반적인 수준과 안정성을 나타냅니다. 결함 발생 횟수와 피크 값 피처는 모델에게 순간적으로 튀는 값의 빈도를 알려줄 수 있습니다. 
+*생성이유*: 내부 신호 피처는 하나의 강철바를 통과하는 전체 신호의 분포 특성을 평균, 표준편차, 중위수 등의 하나의 통계 값으로 요약을 합니다. 해당 통계값들은 신호의 전반적인 수준과 안정성을 나타냅니다. 결함 발생 횟수와 피크 값 피처는 모델에게 순간적으로 튀는 값의 빈도를 알려줄 수 있습니다. 
 
 ### **미시적 시계열 rolling 파생변수**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `micro_sensor_rolling_std_mean_12` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=12 | `df[sensor_col].rolling(window=12, min_periods=1).std().mean()` |
@@ -114,10 +111,9 @@
 | `micro_sensor_rolling_mean_std_49` | 채널별 신호값의 이동 평균을 표준편차로 집계, window=49 | `df[sensor_col].rolling(window=49, min_periods=1).mean().std()` |
 | `micro_sensor_rolling_std_std_49` | 채널별 신호값의 이동 표준편차를 표준편차로 집계, window=49 | `df[sensor_col].rolling(window=49, min_periods=1).std().std()` |
 
-생성이유: EDA과정에서 하나의 강철바 내부의 신호값을 나타내는 시각화 그래프에서 확인을 했듯이, 강철바 내부의 신호는 변동성이 큽니다. rolling 파생 변수는 window를 이동시키면서 통계량을 계산하여, 단순한 통계값으로는 알 수 없는 신호의 국소적인 변화와 변동성을 포착합니다. 또한 `std().mean()`, `mean().std()`, `std().std()` 를 사용하여 이중으로 집계를 하면서 단순 변동성이 아닌 변동성의 변화 양상이라는 정보들을 모델에게 알려주고자 하였습니다. window_size의 경우에는 12와 49로 나누어 단기적 변화를 모두 학습하도록 설계하였습니다. 
+*생성이유*: EDA과정에서 하나의 강철바 내부의 신호값을 나타내는 시각화 그래프에서 확인을 했듯이, 강철바 내부의 신호는 변동성이 큽니다. rolling 파생 변수는 window를 이동시키면서 통계량을 계산하여, 단순한 통계값으로는 알 수 없는 신호의 국소적인 변화와 변동성을 포착합니다. 또한 `std().mean()`, `mean().std()`, `std().std()` 를 사용하여 이중으로 집계를 하면서 단순 변동성이 아닌 변동성의 변화 양상이라는 정보들을 모델에게 알려주고자 하였습니다. window_size의 경우에는 12와 49로 나누어 단기적 변화를 모두 학습하도록 설계하였습니다. 
 
 ### **미시적 시계열 ewm 파생변수**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `micro_sensor_ewm_12_mean` | 채널별 신호값의 지수가중평균의 최종값, span=12 | `df[sensor_col].ewm(span=12, min_periods=1).mean().iloc[-1]` |
@@ -125,7 +121,7 @@
 | `micro_sensor_ewm_49_mean` | 채널별 신호값을 지수가중평균의 최종값, span=49 | `df[sensor_col].ewm(span=49, min_periods=1).mean().iloc[-1]` |
 | `micro_sensor_ewm_49_std` | 채널별 신호값을 지수가중표준편차의 최종값, span=49 | `df[sensor_col].ewm(span=49, min_periods=1).std().iloc[-1]` |
 
-생성이유: rolling은 과거 데이터에 동일한 가중치를 부여하지만, ewm은 최신 데이터에 더 큰 가중치를 줍니다. `iloc[-1]`을 통해 ewm 시계열의 최종값을 추출을 했던 이유는 가중값이 최대한 반영이된 최종 상태 값을 포착하기 위함이였습니다. 이는 강철바의 전반적인 상태를 하나의 값으로 효과적으로 요약하는 전략이 될 수 있습니다. 
+*생성이유*: rolling은 과거 데이터에 동일한 가중치를 부여하지만, ewm은 최신 데이터에 더 큰 가중치를 줍니다. `iloc[-1]`을 통해 ewm 시계열의 최종값을 추출을 했던 이유는 가중값이 최대한 반영이된 최종 상태 값을 포착하기 위함이였습니다. 이는 강철바의 전반적인 상태를 하나의 값으로 효과적으로 요약하는 전략이 될 수 있습니다. 
 
 2-3. 1차 모델링: 정적 피처 + 내부 신호 피처
 
@@ -244,7 +240,6 @@
 3-3. 사용피처
 
 ### **정적 피처**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `STEEL_TYPE` | 강종 | `원본 메타데이터 값` |
@@ -252,10 +247,9 @@
 | `LINE_SPEED` | 검사 속도 | `원본 메타데이터 값`|
 | `BAR_datetime` | 날짜와 검사 시간 | `원본 메타데이터 값` |
 
-생성이유: 정적 피처는 각 검사의 가장 기본적인 환경 정보를 나타내며 특히 `STEEL_TYPE`과 `SIZE`는 LOT 단위로 변경되며 신호의 기준선에 큰 영향을 미치기 때문에, 추후에 모델에 입력을 했을 때 모델이 LOT별로 각기 다른 검사 환경을 구분하고 이해하는데 필요한 정보가 될 것입니다.  
+*생성이유*: 정적 피처는 각 검사의 가장 기본적인 환경 정보를 나타내며 특히 `STEEL_TYPE`과 `SIZE`는 LOT 단위로 변경되며 신호의 기준선에 큰 영향을 미치기 때문에, 추후에 모델에 입력을 했을 때 모델이 LOT별로 각기 다른 검사 환경을 구분하고 이해하는데 필요한 정보가 될 것입니다.  
 
 ### **내부 신호 피처**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `sensor_mean` | 채널 신호값의 평균 | `df['sensor_col'].mean()` |
@@ -265,10 +259,9 @@
 | `event_count_l` | 강철바의 Law_level 결함 총 발생 횟수 | `df[l_envnt_col].sum()` |
 | `sensor_peak_count` | 신호가 상단 임계값을 넘어선 횟수(피크 발생 횟수) | `(signal_original > upper_band_aligned).sum()` |
 
-생성이유: 내부 신호 피처는 하나의 강철바를 통과하는 전체 신호의 분포 특성을 평균, 표준편차, 중위수 등의 하나의 통계 값으로 요약을 합니다. 해당 통계값들은 신호의 전반적인 수준과 안정성을 나타냅니다. 결함 발생 횟수와 피크 값 피처는 모델에게 순간적으로 튀는 값의 빈도를 알려줄 수 있습니다. 
+*생성이유*: 내부 신호 피처는 하나의 강철바를 통과하는 전체 신호의 분포 특성을 평균, 표준편차, 중위수 등의 하나의 통계 값으로 요약을 합니다. 해당 통계값들은 신호의 전반적인 수준과 안정성을 나타냅니다. 결함 발생 횟수와 피크 값 피처는 모델에게 순간적으로 튀는 값의 빈도를 알려줄 수 있습니다. 
 
 ### **미시적 시계열 rolling 파생변수**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `micro_sensor_rolling_std_mean_11` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).std().mean()` |
@@ -278,10 +271,9 @@
 | `micro_sensor_rolling_mean_std_33` | 채널별 신호값의 이동 평균을 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).mean().std()` |
 | `micro_sensor_rolling_std_std_33` | 채널별 신호값의 이동 표준편차를 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).std().std()` |
 
-생성이유: `t+1` 실험과 마찬가지로, EDA에서 확인된 원본 신호의 높은 변동성을 완화하고 신호의 국소적인(Local) 변화를 포착하기 위해 사용했습니다. 다만 실험을 통해 최적의 성능을 보인 window_size를 11과 33으로 변경하였습니다. 
+*생성이유*: `t+1` 실험과 마찬가지로, EDA에서 확인된 원본 신호의 높은 변동성을 완화하고 신호의 국소적인(Local) 변화를 포착하기 위해 사용했습니다. 다만 실험을 통해 최적의 성능을 보인 window_size를 11과 33으로 변경하였습니다. 
 
 ### **미시적 시계열 ewm 파생변수**
-
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 | `micro_sensor_ewm_11_mean` | 채널별 신호값의 지수가중평균의 최종값, span=11 | `df[sensor_col].ewm(span=11, min_periods=1).mean().iloc[-1]` |
@@ -289,14 +281,14 @@
 | `micro_sensor_ewm_33_mean` | 채널별 신호값을 지수가중평균의 최종값, span=33 | `df[sensor_col].ewm(span=33, min_periods=1).mean().iloc[-1]` |
 | `micro_sensor_ewm_33_std` | 채널별 신호값을 지수가중표준편차의 최종값, span=33 | `df[sensor_col].ewm(span=33, min_periods=1).std().iloc[-1]` |
 
-생성이유: `t+1` 실험과 동일하게, 최신 데이터에 더 큰 가중치를 부여하여 강철바의 최종 상태를 효과적으로 요약하기 위해 ewm 피처를 사용했습니다. rolling과 마찬가지로, span_size를 11과 33으로 변경하여 적용했습니다.
+*생성이유*: `t+1` 실험과 동일하게, 최신 데이터에 더 큰 가중치를 부여하여 강철바의 최종 상태를 효과적으로 요약하기 위해 ewm 피처를 사용했습니다. rolling과 마찬가지로, span_size를 11과 33으로 변경하여 적용했습니다.
 
 ### **미시적 순열 엔트로피 파생변수**
 | Feature | Description | Calculation Method / Example |
 | :--- | :--- | :--- |
 `sensor_col_perm_entropy` | 채널별 신호값의 순열 엔트로피(복잡도) | `ant.perm_entropy(df[sensor_col], normalize=True)` |
 
-생성이유: amtropy 라이브러리의 순열 엔트로피(perm_entropy) 알고리즘을 사용하였으며, 순열 엔트로피는 시계열 데이터의 순서 관계를 기반으로 패턴의 무작위성 즉, 신호의 복잡성 또는 예측 불가능성을 측정하기 위해 사용합니다. 표준편차가 단순히 신호의 크기가 얼마나 변동하는지를 본다면, 순열 엔트로피는 신호의 패턴이 얼마나 무질서한지를 봅니다. 데이터의 값이 아닌, 값의 상대적인 순서에 주목하기 때문에 신호의 잡음에 강하다는 장점이 있습니다.
+*생성이유*: amtropy 라이브러리의 순열 엔트로피(perm_entropy) 알고리즘을 사용하였으며, 순열 엔트로피는 시계열 데이터의 순서 관계를 기반으로 패턴의 무작위성 즉, 신호의 복잡성 또는 예측 불가능성을 측정하기 위해 사용합니다. 표준편차가 단순히 신호의 크기가 얼마나 변동하는지를 본다면, 순열 엔트로피는 신호의 패턴이 얼마나 무질서한지를 봅니다. 데이터의 값이 아닌, 값의 상대적인 순서에 주목하기 때문에 신호의 잡음에 강하다는 장점이 있습니다.
 원래는 오리지널 entropy 알고리즘을 사용하려 하였으나 계산 시간이 너무 오래 걸려서 이보다 훨씬 가벼운 순열 엔트로피로 대체를 하게 되었습니다.
 
 ### **미시적 카츠 프랙탈 차원 파생변수**
@@ -304,7 +296,38 @@
 | :--- | :--- | :--- |
 | `sensor_col_katz_fd` | 채널별 신호값의 카츠 프랙탈 차원(거칠기) | `ant.katz_fd(df[sensor_col])` |
 
-생성이유: antropy 라이브러리의 카츠 프랙탈 차원(Katz Fractal Dimension) 알고리즘을 사용하였으며, 엔트로피와는 다른 관점에서, 신호의 기하학적인 거칠기를 측정하기 위해 사용합니다. 프랙탈 차원은 선형적인 통게량으로는 포착하기 힘든 신호의 복잡한 형태를 숫자로 나타냅니다. 
+*생성이유*: antropy 라이브러리의 카츠 프랙탈 차원(Katz Fractal Dimension) 알고리즘을 사용하였으며, 엔트로피와는 다른 관점에서, 신호의 기하학적인 거칠기를 측정하기 위해 사용합니다. 프랙탈 차원은 선형적인 통게량으로는 포착하기 힘든 신호의 복잡한 형태를 숫자로 나타냅니다. 
+
+### **거시적 lag 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `col_lag_1` | 채널별 기본 통계값에 shift(1) 적용 | `df.groupby(['LOT_ID'])[col].shift(1)` |
+| `col_lag_3` | 채널별 기본 통계값에 shift(3) 적용 | `df.groupby(['LOT_ID'])[col].shift(3)` |
+| `col_lag_5` | 채널별 기본 통계값에 shift(5) 적용 | `df.groupby(['LOT_ID'])[col].shift(5)` |
+| `col_lag_9` | 채널별 기본 통계값에 shift(9) 적용 | `df.groupby(['LOT_ID'])[col].shift(9)` |
+
+*생성이유*: lag는 시계열 데이터의 핵심 특성인 자기 상관관계를 모델에게 학습시키기 위한 피처입니다. 머신러닝 모델은 각 행을 독립적인 데이터로 간주하므로, `shift()`함수를 사용하여 과거 시점의 값을 새로운 피처로 추가함으로써 데이터의 시간 의존성을 주입합니다. lag가 적용되는 값은 이전에 산출했던 평균, 표준편차, 중위수 즉, 기본통계값에 적용합니다. 
+
+### **거시적 rolling 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `macro_col_rolling_mean_3` | 채널별 기본 통계값에 적용하는 이동 평균, window=3 | `df.groupby(['LOT_ID'])[col].rolling(window=3).mean()` |
+| `macro_col_rolling_mean_11` | 채널별 기본 통계값에 적용하는 이동 평균, window=11 | `df.groupby(['LOT_ID'])[col].rolling(window=11).mean()` |
+| `macro_col_rolling_std_3` | 채널별 기본 통계값에 적용하는 이동 표준편차, window=3 | `df.groupby(['LOT_ID'])[col].rolling(window=3).std()` |
+| `macro_col_rolling_std_11` | 채널별 기본 통계값에 적용하는 이동 표준편차, window=11 | `df.groupby(['LOT_ID'])[col].rolling(window=11).std()` |
+
+*생성이유*: 
+
+### **거시적 ewm 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `macro_col_ewm_mean_3` | 채널별 기본 통계값에 적용하는 지수 이동 평균 | `df.groupby(['LOT_ID'])[col].ewm(span=3).mean()` |
+| `macro_col_ewm_mean_11` | 채널별 기본 통계값에 적용하는 지수 이동 평균 | `df.groupby(['LOT_ID'])[col].ewm(span=11).mean()` |
+| `macro_col_ewm_std_3` | 채널별 기본 통계값에 적용하는 지수 이동 표준편차 | `df.groupby(['LOT_ID'])[col].ewm(span=3).std()` |
+| `macro_col_ewm_std_11` | 채널별 기본 통계값에 적용하는 지수 이동 표준편차 | `df.groupby(['LOT_ID'])[col].ewm(span=11).std()` |
+
+*생성이유*:
+
 
 
 
