@@ -6,10 +6,12 @@
 
 누설자속탐상(MFL) 검사 공정의 핵심은 장비의 정밀도를 유지하는 교정 작업입니다.
 
-<img width="1166" height="732" alt="image" src="https://github.com/user-attachments/assets/69b5bf2b-0d52-4126-917a-751d56b22561" />
+<img width="888" height="555" alt="image" src="https://github.com/user-attachments/assets/69b5bf2b-0d52-4126-917a-751d56b22561" />
+
 <누설자속탐상(MFL) 공정 흐름도로, 위와 아래 각각 5개의 센서를 통해 강철바 검사를 수행합니다.>
 
-<img width="920" height="1164" alt="image" src="https://github.com/user-attachments/assets/00c6ddfd-1de7-47e1-916b-18a31f9ca189" />
+<img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/00c6ddfd-1de7-47e1-916b-18a31f9ca189" />
+
 <누설자속탐상기>
 
 "LOT(각 강종의 여러개의 강철바의 묶음) 변경 시 교정"이라는 현재 규칙은 생산 현장의 현실과 맞지 않아 자주 무시되며, 이는 측정값의 신뢰도 하락과 잠재적 불량품 발생의 원인이 되기도 합니다. 규칙을 절대적으로 고수를 하게 된다면 생산성이 저하되고, 무시를 하면 품질이 떨어지는 리스크가 증가하는 딜레마에 빠져있는 상황입니다. 
@@ -25,10 +27,14 @@
 ## 1. 데이터 소개 및 EDA
 해당 프로젝트에 사용된 데이터는 누설자속탐상(MFL) 공정에서 10개의 채널의 센서에서 수집된 시계열 데이터입니다. 
 
-<img width="1166" height="556" alt="image" src="https://github.com/user-attachments/assets/97373daf-f1c3-43a0-b6d0-30677cec6015" />
+<img width="888" height="456" alt="image" src="https://github.com/user-attachments/assets/97373daf-f1c3-43a0-b6d0-30677cec6015" />
+
 <센서의 검출 감도 대 결함 길이의 특성>
 
-<img width="1236" height="888" alt="image" src="https://github.com/user-attachments/assets/155b5c59-945d-48e4-b118-b9274be99a2b" />
+
+
+<img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/155b5c59-945d-48e4-b118-b9274be99a2b" />
+
 <실제 강철바가 누설자속탐상기에 투입되어 검사가 진행되는 공정 모습으로, 이 과정에서 10개 채널의 시계열 신호가 수집됩니다.>
 
 
@@ -195,15 +201,17 @@
   - `Fold 5/5: R²: 0.5788, MAE: 0.0097, MSE: 0.0002`
   - `Average: R²: 0.6431 (+/- 0.1894), 0.0090 (+/- 0.0015), 0.0002 (+/- 0.0002)`
 - 피처 중요도
-<img width="1106" height="682" alt="image" src="https://github.com/user-attachments/assets/ff715fe1-7ea3-4b98-92d8-2221b94ca6c6" />
+<img width="1106" height="682" alt="XGB1" src="https://github.com/user-attachments/assets/c0e1dbc5-9011-4d2d-bf47-6e9148624e3d" />
+
 
 - SHAP value
-<img width="803" height="940" alt="image" src="https://github.com/user-attachments/assets/481212ae-d5ff-465e-9900-9ce0826e86e7" />
+<img width="803" height="940" alt="XGB2" src="https://github.com/user-attachments/assets/9a875da4-4e01-4f83-a8bb-38049020ebb0" />
+
 
 결론: 분명 `XGBoostRegressor`가 `RandomForesetRegressor` 보다 더 높은 평가지표 점수를 반환해 낼 것이라고 가설을 설정하고 모델링 실험을 진행하였지만, 예상과 다르게 `RandomForesetRegressor`의 점수를 넘지 못했습니다. 해당 실험을 통해 `XGBoostRegressor`가 항상 뛰어난 성능을 보장한다는 것은 아님을 알 수 있었으며, 새롭게 `XGBoostRegressor`의 피처 중요도와 SHAP value 시각화 그래포 또한 뽑아 보았는데, 제일 처음의 정적인 피처와 내부 신호값으로만 모델링을 진행을 했을 때는 해당 피처들로는 예측이 불가능 하다는 결론을 내렸지만 미시적인 rolling, ewm 파생변수를 투입을 하고 보니 기존의 기본적인 통계값들이 중요도 부분에서 제일 상위 부분에 위치하는 것을 확인 할 수 있었습니다. 이는 새롭게 추가된 미시적 파생 변수들이 단독으로 강력한 예측력을 가졌다기보다, 기존의 기본 통계 피처들과 상호작용하며 그 피처들이 가진 숨겨진 잠재력을 끌어내는 조력자 역할을 수행했음을 의미합니다. 이 분석을 통해, 단순히 개별적인 중요도가 낮은 피처라도 다른 변수와의 관계 속에서 핵심적인 역할을 할 수 있음을 확인했습니다.
 
 
-## 3. t+10 시점 신호값 회귀 예측 모델링 실험
+## 3. 문제 정의의 진화, t+10 시점 신호값 회귀 예측 모델링 실험
 
 3-1. 종속변수 설정 근거
 
@@ -316,7 +324,7 @@
 | `macro_col_rolling_std_3` | 채널별 기본 통계값에 적용하는 이동 표준편차, window=3 | `df.groupby(['LOT_ID'])[col].rolling(window=3).std()` |
 | `macro_col_rolling_std_11` | 채널별 기본 통계값에 적용하는 이동 표준편차, window=11 | `df.groupby(['LOT_ID'])[col].rolling(window=11).std()` |
 
-*생성이유*: 
+*생성이유*: EDA에서 확인을 했듯, 해당 데이터 프레임은 LOT 단위로 신호 패턴과 강종 등이 완전히 리셋이 되는 구조를 가집니다. 거시적 rolling 파생 변수는 LOT 내부에서 기본 통계 피처들의 시간에 따른 추세를 포착하기 위해 설계되었습니다. 이동평균 기법은 특정 크기window를 이동시키며 통계량을 계산하여, 단기적인 노이즈를 완화하고 데이터의 국소적인 흐름을 보여주는 가장 기본적인 방법입니다. window 크기를 3과 11로 설정한 것은, 모델에게 매우 짧은 기간의 즉각적인 추세(window=3)와조금 더 안정적인 중기적 추세(window=11)를 모두 제공하기 위함입니다. 
 
 ### **거시적 ewm 파생변수**
 | Feature | Description | Calculation Method / Example |
@@ -326,10 +334,21 @@
 | `macro_col_ewm_std_3` | 채널별 기본 통계값에 적용하는 지수 이동 표준편차 | `df.groupby(['LOT_ID'])[col].ewm(span=3).std()` |
 | `macro_col_ewm_std_11` | 채널별 기본 통계값에 적용하는 지수 이동 표준편차 | `df.groupby(['LOT_ID'])[col].ewm(span=11).std()` |
 
-*생성이유*:
+*생성이유*: EDA에서 확인을 했듯, 해당 데이터 프레임은 LOT 단위로 신호 패턴과 강종 등이 완전히 리셋이 되는 구조를 가집니다. 거시적 ewm 파생 변수는 이러한 구조를 고려하여, 각 LOT 내부에서 기본 통계 피처들이 시간의 흐름에 따라 어떻게 변하는지 그 추세를 모델에게 알려주기 위해 설계가 되었습니다. ewm은 최신 강철바 데이터에 더 큰 가중치를 부여하기 때문에, 장비의 점진적인 상태 악화와 같은 변화 현상을 모델에 알려줄 수 있습니다.
+span 값은 단기적이고 민감한 추세와 중기적이고 안정적인 추세를 제공하기 위해 설정되었습니다. 
 
+### **거시적 LOT내부 컨텍스트 파생변수**
+| Feature | Description | Calculation Method / Example |
+| :--- | :--- | :--- |
+| `bar_in_lot_sequence` | LOT 내에서 강철바의 상대적인 순서 | `df.groupby('LOT_ID').cumcount() + 1` |
+| `normalized_sequence` | LOT내부 시간 정규화 | `(df['bar_in_lot_sequence'] - 1) / (df.groupby('LOT_ID')['bar_in_lot_sequence'].transform('max') - 1)` |
+| `noise_delta_from_start` | LOT 시작점 대비 노이즈의 절대적 변화량 | `df[micro_sensor_rolling_std_mean_11] - df.groupby('LOT_ID')[noise_col].transform('first')` |
+| `noise_ratio_from_start` | LOT 시작점 대비 노이즈의 상대적 변화율 | `df[micro_sensor_rolling_std_mean_11] / (start_noise + 1e-6)` |
+| `seq_x_volatility` | 시간에 따라 가중된 변동성 | `df[bar_in_lot_sequence] * df[micro_sensor_rolling_std_mean_11]` |
 
+*생성이유*: EDA에서 확인을 했듯, 해당 데이터 프레임은 LOT 단위로 신호 패턴과 강종 등이 완전히 리셋이 되는 구조를 가집니다. LOT 내부 컨텍스트 피처 그룹은 모델이 단순히 개별 강철바만 보는 것이 아닌, 해당 강철바가 소속된 LOT내에서 초반, 중반, 후반 중 어디쯤 위치해 있는가라는 맥락을 모델이 이해하도록 돕습니다. 또한 변동관련 피처들의 변동값들을 계산하기 위해서 `micro_sensor_rolling_std_mean_11`을 선택한 이유는 해당 컬림은 이동 표준편차의 평균으로 해당 강철바의 신호가 평균적으로 얼마나 흔들렸는가를 나타내는 즉, 신호의 국소적인 변동성과 불안정성을 가장 잘 나타내는 지표이기 때문이기 때문입니다.
 
+ 
 
 
 
