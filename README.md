@@ -592,7 +592,7 @@ span 값은 단기적이고 민감한 추세와 중기적이고 안정적인 추
 - SHAP value:
 <img width="551" height="677" alt="image" src="https://github.com/user-attachments/assets/6ef3f33d-4c5f-4364-a3f8-503c5af4e739" />
 
-결론: 결론만 말하자면 `LGBM`이 
+결론: 결론부터 말하자면 `LGBM`이 `XGBoost` 모델 보다 성능이 더 뛰어났습니다. 
 
 
 
