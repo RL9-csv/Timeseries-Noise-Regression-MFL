@@ -728,3 +728,5 @@ span 값은 단기적이고 민감한 추세와 중기적이고 안정적인 추
 
 <img width="1589" height="889" alt="image" src="https://github.com/user-attachments/assets/c061c306-7c8a-4af1-a111-7c8efa5e0fe7" />
 
+PCA
+
