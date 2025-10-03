@@ -6,10 +6,6 @@
 
 누설자속탐상(MFL) 검사 공정의 핵심은 장비의 정밀도를 유지하는 교정 작업입니다.
 
-<img width="888" height="555" alt="image" src="https://github.com/user-attachments/assets/69b5bf2b-0d52-4126-917a-751d56b22561" />
-<누설자속탐상(MFL) 공정 흐름도로, 위와 아래 각각 5개의 센서를 통해 강철바 검사를 수행합니다.>
-
-
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/00c6ddfd-1de7-47e1-916b-18a31f9ca189" />
 <누설자속탐상기>
 
@@ -32,11 +28,8 @@
 
 ## 1. 데이터 소개 및 EDA
 해당 프로젝트에 사용된 데이터는 누설자속탐상(MFL) 공정에서 10개의 채널의 센서에서 수집된 시계열 데이터입니다. 
-
-<img width="888" height="456" alt="image" src="https://github.com/user-attachments/assets/97373daf-f1c3-43a0-b6d0-30677cec6015" />
-
-<센서의 검출 감도 대 결함 길이의 특성>
-
+<img width="888" height="555" alt="image" src="https://github.com/user-attachments/assets/69b5bf2b-0d52-4126-917a-751d56b22561" />
+<위아래로 각각 5개의 센서를 통해 강철바의 검사가 진행됩니다.>
 
 
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/155b5c59-945d-48e4-b118-b9274be99a2b" />
