@@ -7,6 +7,7 @@
 누설자속탐상(MFL) 검사 공정의 핵심은 장비의 정밀도를 유지하는 교정 작업입니다.
 
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/00c6ddfd-1de7-47e1-916b-18a31f9ca189" />
+
 <누설자속탐상기>
 
 
