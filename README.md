@@ -4,7 +4,7 @@
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/3ffc9784-0854-43e4-bda4-9c5bd1d9cf53" />
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/572565cc-e68e-42d4-a1d6-b0d78daadd83" />
 
-해당 프로젝트는 위의 자설누속탐상기에서 수집되는 시계열 센서 데이터의 미래 추세를 머신러닝 모델을 통해 예측하여, 생산성과 품질의 딜레마를 해결하는 것을 목표로 합니다.
+*해당 프로젝트는 위의 자설누속탐상기에서 수집되는 시계열 센서 데이터의 미래 추세를 머신러닝 모델을 통해 예측하여, 생산성과 품질의 딜레마를 해결하는 것을 목표로 합니다.*
 
 | Category | Description |
 | :--- | :--- |
