@@ -58,7 +58,7 @@
 ### 5. 특잇값 분해와 주성분 분석
 ### 6. 최종 결론
 
-## 1. 데이터 소개 및 EDA
+## 1. 데이터 EDA 및 시계열 분해의 역설
 해당 프로젝트에 사용된 데이터는 누설자속탐상(MFL) 공정에서 10개의 채널의 센서에서 수집된 시계열 데이터입니다. 
 
 <img width="888" height="555" alt="image" src="https://github.com/user-attachments/assets/69b5bf2b-0d52-4126-917a-751d56b22561" />
