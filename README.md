@@ -1,5 +1,5 @@
-<img width="1420" height="922" alt="image" src="https://github.com/user-attachments/assets/3ffc9784-0854-43e4-bda4-9c5bd1d9cf53" />
-<img width="1450" height="964" alt="image" src="https://github.com/user-attachments/assets/572565cc-e68e-42d4-a1d6-b0d78daadd83" />
+<img width="999" height="999" alt="image" src="https://github.com/user-attachments/assets/3ffc9784-0854-43e4-bda4-9c5bd1d9cf53" />
+<img width="999" height="999" alt="image" src="https://github.com/user-attachments/assets/572565cc-e68e-42d4-a1d6-b0d78daadd83" />
 
 
 # Timeseries-Noise-Regression-MFL
