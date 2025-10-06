@@ -288,7 +288,6 @@
 | `micro_sensor_rolling_std_mean_33` | 채널별 신호값의 이동 표준편차를 평균으로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).std().mean()` |
 | `micro_sensor_rolling_mean_std_33` | 채널별 신호값의 이동 평균을 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).mean().std()` |
 | `micro_sensor_rolling_std_std_33` | 채널별 신호값의 이동 표준편차를 표준편차로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).std().std()` |
-| :--- | :--- | :--- |
 | `micro_sensor_rolling_min_mean_11` | 채널별 신호값의 이동 최솟값을 평균으로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).min().mean()` | 
 | `micro_sensor_rolling_min_std_11` | 채널별 신호값의 이동 최솟값을 표준편차로 집계, window=11 | `df[sensor_col].rolling(window=11, min_periods=1).min().std()` | 
 | `micro_sensor_rolling_min_mean_33` | 채널별 신호값의 이동 최솟값을 평균으로 집계, window=33 | `df[sensor_col].rolling(window=33, min_periods=1).min().mean()` |
