@@ -1,9 +1,10 @@
+# Timeseries-Noise-Regression-MFL
+# 누설자속탐상(MFL) 공정 센서 데이터 기반의 시계열 노이즈 회귀 예측
+
 <img width="777" height="555" alt="image" src="https://github.com/user-attachments/assets/3ffc9784-0854-43e4-bda4-9c5bd1d9cf53" />
 <img width="777" height="555" alt="image" src="https://github.com/user-attachments/assets/572565cc-e68e-42d4-a1d6-b0d78daadd83" />
 
 
-# Timeseries-Noise-Regression-MFL
-# 누설자속탐상(MFL) 공정 센서 데이터 기반의 시계열 노이즈 회귀 예측
 
 ## 프로젝트 개요
 ### 누설자속탐상(MFL) 공정의 데이터 기반 최적화: 미래 신호값의 추세 예측을 통한 선제적 위험 감지
