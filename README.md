@@ -1,5 +1,5 @@
-# Timeseries-Noise-Regression-MFL
-# MFL 공정의 수율 손실을 예방하는 머신러닝 기반 예지 보전 모델 개발
+# **Timeseries-Noise-Regression-MFL**
+# **MFL 공정의 수율 손실을 예방하는 머신러닝 기반 예지 보전 모델 개발**
 
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/3ffc9784-0854-43e4-bda4-9c5bd1d9cf53" />
 <img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/572565cc-e68e-42d4-a1d6-b0d78daadd83" />
