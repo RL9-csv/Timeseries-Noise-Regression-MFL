@@ -1,0 +1,8 @@
+pandas
+numpy
+scikit-learn
+lightgbm
+tqdm
+antropy
+optuna
+matplotlib
